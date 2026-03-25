@@ -2,37 +2,59 @@
 # Menu View for MineSweeper Game
 # imports
 import arcade
+import settings
 
 
-# Description: Main menu screen with difficulty selection
+# Class Description: Main menu screen with difficulty selection
 # Args: None
 # Returns: None
 # Notes: Handles the main menu interface and user interactions
 class MenuView(arcade.View):
     """Main menu screen with difficulty selection"""
-    
+    # (*** Functions: __init__, get_button_positions, on_draw, draw_button, on_mouse_press, start_game***)
+
+    # Description: Initialize the menu view
+    # Args: self
+    # Returns: None
+    # Notes: Sets background color and button properties
     def __init__(self):
         super().__init__()
-        arcade.set_background_color(arcade.color.DARK_BLUE_GRAY)
+        arcade.set_background_color(settings.Background_Color_Menu)
         
         # Button properties
         self.button_width = 200
         self.button_height = 60
         self.button_spacing = 20
+
+
+
     
+    # Description: Calculate button positions based on current window size
+    # Args: self
+    # Returns: tuple of arcade.LBWH objects representing button positions
+    # Notes: Positions buttons centered horizontally and spaced vertically
     def get_button_positions(self):
         """Calculate button positions based on current window size"""
         center_x = self.window.width // 2
         start_y = self.window.height // 2 + 100
         
-        # Button rectangles (Left, Bottom, Width, Height)
+        # Define Button shape
         easy_button = arcade.LBWH(center_x - self.button_width//2, start_y, self.button_width, self.button_height)
         normal_button = arcade.LBWH(center_x - self.button_width//2, start_y - (self.button_height + self.button_spacing), self.button_width, self.button_height)
         expert_button = arcade.LBWH(center_x - self.button_width//2, start_y - 2*(self.button_height + self.button_spacing), self.button_width, self.button_height)
         
         
         return easy_button, normal_button, expert_button
+
+
+
+
+
     
+    # Description: Render the menu screen
+    # Args: self
+    # Returns: None
+    # Notes: Draws title and buttons
     def on_draw(self):
         """Render the menu screen"""
         self.clear()
@@ -58,7 +80,15 @@ class MenuView(arcade.View):
                         arcade.color.WHITE, font_size=16, anchor_x="center")
         arcade.draw_text("Expert: 16x30, 99 mines", self.window.width // 2, y_pos - 50, 
                         arcade.color.WHITE, font_size=16, anchor_x="center")
+
+
+
+
     
+    # Description: Draw a button with text
+    # Args: self, button_rect (arcade.LBWH), text (str), color (arcade.Color)
+    # Returns: None
+    # Notes: Draws a filled rectangle with a border and centered text
     def draw_button(self, button_rect, text, color):
         """Draw a button with text"""
         # Draw button background
@@ -71,22 +101,30 @@ class MenuView(arcade.View):
         arcade.draw_text(text, button_rect.center_x, button_rect.center_y,
                         arcade.color.BLACK, font_size=20, anchor_x="center", anchor_y="center")
     
+    # Description: Handle mouse press events on the menu
+    # Args: self, x (int), y (int), button (int), modifiers (int)
+    # Returns: None
+    # Notes: Detects clicks on difficulty buttons and starts the game
     def on_mouse_press(self, x, y, button, modifiers):
         """Handle menu button clicks"""
         if button == arcade.MOUSE_BUTTON_LEFT:
             # Get current button positions
             easy_button, normal_button, expert_button = self.get_button_positions()
-            
+
+            # Check which button was clicked
             if easy_button.point_in_rect((x, y)):
                 self.start_game("EASY")
             elif normal_button.point_in_rect((x, y)):
                 self.start_game("NORMAL")
             elif expert_button.point_in_rect((x, y)):
                 self.start_game("EXPERT")
-    
+
+    # Description: Start the game with selected difficulty
+    # Args: self, difficulty (str)
+    # Returns: None
+    # Notes: Switches to GameView with chosen difficulty
     def start_game(self, difficulty):
         """Start the game with selected difficulty"""
         from views.game_view import GameView
         game_view = GameView(difficulty)
-        game_view.setup()
         self.window.show_view(game_view)

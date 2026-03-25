@@ -9,6 +9,8 @@ from views.menu_view import MenuView
 # Constants
 WINDOW_TITLE = "MineSweeper Arcade Game"
 
+# (** Functions: Main**)
+
 # Description: Main entry point for the MineSweeper game using Arcade library.
 # Args: None
 # Returns: None

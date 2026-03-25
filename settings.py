@@ -1,8 +1,18 @@
 # settings.py
+# The main settings file for MineSweeper Game
+
+# imports
 import arcade
-# Main Design Settings for MineSweeper Game
+
+"""
+    Main Design Settings for MineSweeper Game
+
+"""
+
 # Background color
-Background_Color = arcade.csscolor.LIGHT_GRAY
+Background_Color_Game = arcade.csscolor.LIGHT_GRAY
+Background_Color_Menu = arcade.csscolor.DARK_BLUE
+
 # Difficulty settings
 DIFFICULTIES = {
     "EASY": {
@@ -27,7 +37,7 @@ DIFFICULTIES = {
 
 # Starting/default difficulty (used only for initial setup)
 STARTING_DIFFICULTY = "EXPERT"
-SELECTED_DIFFICULTY = STARTING_DIFFICULTY  # This will be updated by menu selection
+SELECTED_DIFFICULTY = STARTING_DIFFICULTY  
 
 # Constants for the game settings - initialize with starting values
 Rows = DIFFICULTIES[STARTING_DIFFICULTY]["rows"]
@@ -35,6 +45,11 @@ Columns = DIFFICULTIES[STARTING_DIFFICULTY]["columns"]
 Mines = DIFFICULTIES[STARTING_DIFFICULTY]["mines"]
 UI_Height = DIFFICULTIES[STARTING_DIFFICULTY]["ui_height"]
 
+
+# Description: Update the selected difficulty and recalculate all derived settings
+# Args: difficulty (str) - New difficulty level ("EASY", "NORMAL", "EXPERT")
+# Returns: None
+# Notes: Modifies global settings based on selected difficulty
 def set_difficulty(difficulty):
     """Update the selected difficulty and recalculate all derived settings"""
     global SELECTED_DIFFICULTY, Rows, Columns, Mines, UI_Height
@@ -54,14 +69,16 @@ def set_difficulty(difficulty):
     Screen_Width = Total_width_Board + 100
     Screen_Height = Total_height_Board + 100
 
+
+
 # Dimensions for tiles and total board size
 Tile_Size = 36
 Total_width_Board = Columns * Tile_Size
 Total_height_Board = (Rows * Tile_Size) + UI_Height
 
 # Screen dimensions
-Screen_Width = Total_width_Board+100
-Screen_Height = Total_height_Board+100
+Screen_Width = Total_width_Board + 100
+Screen_Height = Total_height_Board + 100
 
 # Dimensions for Menu
 Menu_Height = 300

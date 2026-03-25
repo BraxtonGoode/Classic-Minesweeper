@@ -1,13 +1,16 @@
 # board.py
+# Board handling for MineSweeper Game
 # imports
 import arcade
 import settings
 import random
 
-# Board class
+# Class Description: Board class responsible for designing the game board, placing mines, and handling cell interactions.
+# Args: None
+# Returns: None
+# Notes: Manages the game board state, including mine placement, cell revealing, and flagging.
 class Board:
-    # This class is responsible for designing the game board
-    # Initialization of the board
+    # (*** Functions: __init__, generate_mines, reveal_cell, count_adjacent_mines, draw, toggle_flag, get_flag_count ***)
     def __init__(self):
         """Initialize the board with mines and covered cells."""
         # Create empty 2D array (all False = no mines initially)
@@ -36,36 +39,42 @@ class Board:
 
     def reveal_cell(self, row, col, elapsed_time):
         """Reveal a specific cell by removing its cover. Returns game status."""
-        # Check bounds first
+        # Check bounds first if the cell is out of bounds, return "out_of_bounds"
         if not (0 <= row < settings.Rows and 
                 0 <= col < settings.Columns):
-            return "out_of_bounds"  # Out of bounds, do nothing
+            return "out_of_bounds"  
         
         # Prevent revealing flagged cells - just ignore the click
         if self.flags[row][col]:
-            return "flagged"  # Do nothing, keep the flag
-            
-        if not self.coverd[row][col]:
-            return "already_revealed"  # Already revealed, do nothing
+            return "flagged"  
         
+        # Prevent revealing already revealed cells - just ignore the click
+        if not self.coverd[row][col]:
+            return "already_revealed" 
+        
+        # Reveal the cell
         self.coverd[row][col] = False
         print(f"Revealed cell at ({row}, {col})")
 
+        # Check if it's a mine if it is, return "mine_hit" to trigger game over
         if self.mines[row][col]:
             print("Boom! Hit a mine!")
-            return "mine_hit"  # Return game over status
-            
+            return "mine_hit"  
+        
+        # If it's not a mine, check how many adjacent mines there are and reveal neighbors if there are none
         adjacent_count = self.count_adjacent_mines(row, col)
         if adjacent_count > 0:
             print(f"Cell ({row}, {col}) has {adjacent_count} adjacent mines.")
         else:
             print(f"Cell ({row}, {col}) has no adjacent mines.")
+            # Recursively reveal all adjacent cells if there are no adjacent mines
             directions = [(-1, -1), (-1, 0), (-1, 1),
                             (0, -1),          (0, 1),
                             (1, -1), (1, 0), (1, 1)]
             for dr, dc in directions:
                 self.reveal_cell(row + dr, col + dc, elapsed_time)
 
+        # Check for win condition: if all non-mine cells are revealed, player wins
         if all(not self.coverd[r][c] or self.mines[r][c]
                for r in range(settings.Rows)
                for c in range(settings.Columns)):
@@ -73,12 +82,15 @@ class Board:
             win = ["You win!", f"Time: {elapsed_time} seconds"]
             return win
         
-        return "safe"  # Return safe status
+        return "safe"  
 
 
 
 
-
+    # Description: Count the number of mines adjacent to a given cell
+    # Args: self, row (int), col (int)
+    # Returns: int - The count of adjacent mines
+    # Notes: Checks all 8 neighboring cells and counts how many contain mines
     def count_adjacent_mines(self, row, col):
         """Count the number of mines adjacent to the given cell."""
         count = 0
@@ -99,8 +111,11 @@ class Board:
         
         return count
 
-    # Draws the board grid and UI area
-    def draw(self, board_x, board_y, elapsed_time):
+    # Description: Draw the game board at the specified position
+    # Args: self, board_x (int), board_y (int), elapsed_time (int)
+    # Returns: None
+    # Notes: Draws the grid, cell covers, mines, flags, and UI elements (flag count and timer)
+    def draw_board(self, board_x, board_y, elapsed_time):
         """Draw the game board at the specified position."""
         # Draw the board outline
         arcade.draw_lbwh_rectangle_outline(
@@ -140,6 +155,17 @@ class Board:
                 arcade.color.BLACK,
                 2,
             )
+        # Draw the cell covers and contents
+        self.draw_Covers(board_x, board_y)
+
+        # Draw the UI area (flags count and timer)
+        self.draw_ui(board_x, board_y, elapsed_time)
+    
+    # Description: Draw cell covers, mines, numbers, and flags based on the current board state
+    # Args: self, board_x (int), board_y (int)
+    # Returns: None
+    # Notes: Iterates through all cells and draws the appropriate graphics based on whether they are covered, contain mines, or have flags
+    def draw_Covers(self, board_x, board_y):
         # Draw Cell covers
         for row in range(settings.Rows):
             for col in range(settings.Columns):
@@ -168,11 +194,19 @@ class Board:
                         adjacent_count = self.count_adjacent_mines(row, col)
                         if adjacent_count > 0:
                             # Draw the number of adjacent mines
+                            if adjacent_count == 1:
+                                color = arcade.color.BLUE
+                            elif adjacent_count == 2:
+                                color = arcade.color.DARK_SEA_GREEN
+                            elif adjacent_count == 3:
+                                color = arcade.color.RED
+                            elif adjacent_count == 4:
+                                color = arcade.color.ORANGE
                             arcade.draw_text(
                                 str(adjacent_count),
                                 cell_x + settings.Tile_Size / 2,
                                 cell_y + settings.Tile_Size / 2,
-                                arcade.color.BLACK,
+                                color,
                                 font_size=20,
                                 anchor_x="center",
                                 anchor_y="center"
@@ -181,13 +215,18 @@ class Board:
                 if self.flags[row][col]:
                     cell_x = board_x + (col * settings.Tile_Size)
                     cell_y = board_y + (row * settings.Tile_Size)
-                    # Draw a simple flag (red triangle)
                     # Draw the flag texture
                     rect = arcade.LBWH(
                         cell_x + 2, cell_y + 2,
                         settings.Tile_Size - 4, settings.Tile_Size - 4
                     )
                     arcade.draw_texture_rect(self.flag_texture,rect)
+
+    # Description: Draw the UI area above the game grid, showing flag count and elapsed time
+    # Args: self, board_x (int), board_y (int), elapsed_time (int)
+    # Returns: None
+    # Notes: Draws the flag count and timer above the game grid
+    def draw_ui(self, board_x, board_y, elapsed_time):
         # design UI area
         ui_y = board_y + settings.Rows * settings.Tile_Size
 
@@ -206,6 +245,10 @@ class Board:
                         arcade.color.BLACK, font_size=18)
 
 
+    # Description: Toggle a flag on a specific cell
+    # Args: self, row (int), col (int)
+    # Returns: None
+    # Notes: Toggles the flag state of a cell, preventing flagging of revealed cells and allowing unflagging
     def toggle_flag(self, row, col):
         """Toggle a flag on a specific cell."""
         if not (0 <= row < settings.Rows and 
@@ -219,6 +262,11 @@ class Board:
             print(f"Flagged cell at ({row}, {col})")
         else:
             print(f"Unflagged cell at ({row}, {col})")
+
+    # Description: Get the total number of flags currently placed on the board
+    # Args: self
+    # Returns: int - the total number of flags
+    # Notes: Iterates through all cells and counts the flags that are currently placed
     def get_flag_count(self):
         """Return the total number of flags currently placed on the board."""
         flag_count = 0

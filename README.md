@@ -4,9 +4,7 @@ This game is built upon the classic game of Minesweeper, where the player must u
 
 The purpose of writing this software was to create a fun and engaging game that challenges players' problem-solving skills and strategic thinking. I wanted to recreate the classic Minesweeper game while also adding my own unique features and improvements. Additionally, I aimed to enhance my programming skills and gain experience in game development using Python and the Arcade library.
 
-{Provide a link to your YouTube demonstration.  It should be a 4-5 minute demo of the game being played and a walkthrough of the code.}
-
-[Software Demo Video](http://youtube.link.goes.here)
+[Software Demo Video](https://youtu.be/3VacrNFF9_c)
 
 # Development Environment
 

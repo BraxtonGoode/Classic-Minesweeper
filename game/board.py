@@ -26,7 +26,10 @@ class Board:
         # Place mines randomly
         self.generate_mines()
 
-
+    # Description: Randomly place mines on the board
+    # Args: self
+    # Returns: None
+    # Notes: Uses random number generation to place a specified number of mines on the board without overlap
     def generate_mines(self):
         """Randomly place mines on the board."""
         mines_placed = 0
@@ -37,6 +40,12 @@ class Board:
                 self.mines[row][col] = True
                 mines_placed += 1
 
+
+    # Description: Reveal a specific cell by removing its cover. Returns game status.
+    # Args: self, row (int), col (int), elapsed_time (int)
+    # Returns: str or list - "mine_hit", "safe", "already_revealed", "flagged", "out_of_bounds", or ["You win!", f"Time: {elapsed_time} seconds"]
+    # Notes: Handles the logic for revealing a cell, including checking for mines, counting adjacent mines, and determining win conditions. Also checks for out-of-bounds 
+    # and flagged cells to prevent invalid actions.
     def reveal_cell(self, row, col, elapsed_time):
         """Reveal a specific cell by removing its cover. Returns game status."""
         # Check bounds first if the cell is out of bounds, return "out_of_bounds"

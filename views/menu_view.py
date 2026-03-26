@@ -78,7 +78,7 @@ class MenuView(arcade.View):
                         arcade.color.WHITE, font_size=16, anchor_x="center")
         arcade.draw_text("Normal: 16x16, 30 mines", self.window.width // 2, y_pos - 25, 
                         arcade.color.WHITE, font_size=16, anchor_x="center")
-        arcade.draw_text("Expert: 16x30, 99 mines", self.window.width // 2, y_pos - 50, 
+        arcade.draw_text("Expert: 20x20, 40 mines", self.window.width // 2, y_pos - 50, 
                         arcade.color.WHITE, font_size=16, anchor_x="center")
 
 
